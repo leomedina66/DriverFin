@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="540.0" spacing="16.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.driverfin.controller.RecordFormController">
+   <padding>
+      <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+   </padding>
+   <children>
+      
+      <!-- Dialog Header -->
+      <VBox spacing="4.0">
+         <children>
+            <Label fx:id="lblFormTitle" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #4a4a4a;" text="📝 Novo Registro Diário" />
+            <Label style="-fx-font-size: 12px; -fx-text-fill: #7a7a7a;" text="Preencha os dados do seu turno de trabalho" />
+         </children>
+      </VBox>
+
+      <!-- Form Grid -->
+      <GridPane hgap="12.0" vgap="12.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            
+            <!-- Row 0: Date (Full Row) -->
+            <VBox spacing="4.0" GridPane.columnSpan="2">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="Data do Turno *" />
+                  <DatePicker fx:id="datePicker" maxWidth="1.7976931348623157E308" promptText="Selecione a data" />
+               </children>
+            </VBox>
+
+            <!-- Row 1: Time Start / Time End -->
+            <VBox spacing="4.0" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="Hora Início (HH:mm) *" />
+                  <TextField fx:id="timeStartField" promptText="08:00" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="Hora Fim (HH:mm) *" />
+                  <TextField fx:id="timeEndField" promptText="17:00" />
+               </children>
+            </VBox>
+
+            <!-- Row 2: KM Start / KM End -->
+            <VBox spacing="4.0" GridPane.rowIndex="2">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="KM Inicial *" />
+                  <TextField fx:id="kmStartField" promptText="12450.0" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="KM Final *" />
+                  <TextField fx:id="kmEndField" promptText="12630.0" />
+               </children>
+            </VBox>
+
+            <!-- Row 3: Uber Earn / 99 Earn -->
+            <VBox spacing="4.0" GridPane.rowIndex="3">
+               <children>
+                  <Label style="-fx-text-fill: #3b82f6; -fx-font-weight: bold;" text="Ganhos Uber (R$)" />
+                  <TextField fx:id="earnUberField" promptText="0.00" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <children>
+                  <Label style="-fx-text-fill: #93c5fd; -fx-font-weight: bold;" text="Ganhos 99 (R$)" />
+                  <TextField fx:id="earn99Field" promptText="0.00" />
+               </children>
+            </VBox>
+
+            <!-- Row 4: Earn Others / Fuel Cost -->
+            <VBox spacing="4.0" GridPane.rowIndex="4">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="Outros Ganhos (R$)" />
+                  <TextField fx:id="earnOthersField" promptText="0.00" />
+               </children>
+            </VBox>
+            <VBox spacing="4.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <children>
+                  <Label style="-fx-text-fill: #ef4444; -fx-font-weight: bold;" text="Combustível (R$)" />
+                  <TextField fx:id="costFuelField" promptText="0.00" />
+               </children>
+            </VBox>
+
+            <!-- Row 5: Food/Other Costs / Notes -->
+            <VBox spacing="4.0" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <children>
+                  <Label style="-fx-text-fill: #f87171; -fx-font-weight: bold;" text="Alimentação &amp; Outros Custos (R$)" />
+                  <TextField fx:id="costFoodOtherField" promptText="0.00" />
+               </children>
+            </VBox>
+
+            <!-- Row 6: Notes (Full Row) -->
+            <VBox spacing="4.0" GridPane.columnSpan="2" GridPane.rowIndex="6">
+               <children>
+                  <Label style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;" text="Observações / Anotações" />
+                  <TextArea fx:id="notesArea" prefRowCount="2" promptText="Detalhes do turno (ex: trânsito intenso, rotas, abastecimento...)" wrapText="true" />
+               </children>
+            </VBox>
+
+         </children>
+      </GridPane>
+
+      <!-- Real-time Calculations Box -->
+      <!-- CÁLCULO EM TEMPO REAL -->
+      <VBox spacing="6.0" style="-fx-background-color: #d8e0d5; -fx-background-radius: 8px; -fx-padding: 12px; -fx-border-color: #c4d0bf; -fx-border-radius: 8px;">
+         <children>
+            <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #7a7a7a;" text="⚡ CÁLCULO EM TEMPO REAL" />
+            <HBox alignment="CENTER" spacing="14.0">
+               <children>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="Horas" />
+                        <Label fx:id="lblCalcHours" style="-fx-font-weight: bold; -fx-text-fill: #4a4a4a;" text="0.0 h" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="KM Total" />
+                        <Label fx:id="lblCalcKm" style="-fx-font-weight: bold; -fx-text-fill: #4a4a4a;" text="0 km" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="Bruto" />
+                        <Label fx:id="lblCalcGross" style="-fx-font-weight: bold; -fx-text-fill: #3b82f6;" text="R$ 0,00" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="Custos" />
+                        <Label fx:id="lblCalcCosts" style="-fx-font-weight: bold; -fx-text-fill: #ef4444;" text="R$ 0,00" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="Manutenção" />
+                        <Label fx:id="lblCalcMaint" style="-fx-font-weight: bold; -fx-text-fill: #f59e0b;" text="R$ 0,00" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label style="-fx-font-size: 10px; -fx-text-fill: #7a7a7a;" text="Líquido" />
+                        <Label fx:id="lblCalcNet" style="-fx-font-weight: bold; -fx-text-fill: #10b981;" text="R$ 0,00" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+
+      <!-- Action Buttons -->
+      <HBox alignment="CENTER_RIGHT" spacing="12.0">
+         <children>
+            <Button fx:id="btnCancel" onAction="#handleCancel" styleClass="btn-outline" text="Cancelar" />
+            <Button fx:id="btnSave" onAction="#handleSave" styleClass="btn-primary" text="Salvar Registro" />
+         </children>
+      </HBox>
+
+   </children>
+</VBox>

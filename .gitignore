@@ -1,0 +1,9 @@
+target/
+*.jar
+*.db
+*.sqlite
+*.log
+.idea/
+.vscode/
+*.class
+dist/

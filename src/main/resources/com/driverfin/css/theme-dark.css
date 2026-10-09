@@ -1,0 +1,368 @@
+/* theme-dark.css - Dark Theme for DriverFin */
+
+.root {
+    -fx-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #e3dccf;
+    -fx-text-fill: #4a4a4a;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #e3dccf;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Custom ScrollBar */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: #e3dccf;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #faf9f6;
+    -fx-background-radius: 12px;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #e3dccf;
+}
+
+.scroll-bar .decrement-button,
+.scroll-bar .increment-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Headings & Text */
+.text {
+    -fx-fill: #4a4a4a;
+}
+
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a4a4a;
+}
+
+.subtitle-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7a7a7a;
+}
+
+.section-header {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4a4a4a;
+}
+
+/* Glassmorphic / Dark Cards */
+.card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-border-color: #faf9f6;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.25), 10, 0, 0, 4);
+}
+
+.kpi-card {
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #e3dccf);
+    -fx-background-radius: 12px;
+    -fx-border-color: #faf9f6;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
+}
+
+.kpi-card:hover {
+    -fx-border-color: #e2e8f0;
+}
+
+.kpi-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7a7a7a;
+}
+
+.kpi-value-gross {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7aa2a9; /* Blue Revenue */
+}
+
+.kpi-value-costs {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c67053; /* Red Cost */
+}
+
+.kpi-value-maint {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #d9a05b; /* Amber Maintenance */
+}
+
+.kpi-value-net {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #799477; /* Emerald Green Profit */
+}
+
+.kpi-value-efficiency {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8b5cf6; /* Purple Efficiency */
+}
+
+.kpi-subtext {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+/* Form / Input Controls */
+.text-field, .text-area, .date-picker, .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #4a4a4a;
+    -fx-border-color: #d1c9b8;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 12px;
+    -fx-padding: 8px 12px;
+    -fx-prompt-text-fill: #a0a0a0;
+}
+
+.text-field:focused, .text-area:focused, .combo-box:focused, .date-picker:focused {
+    -fx-border-color: #7aa2a9;
+    -fx-effect: dropshadow(three-pass-box, rgba(59, 130, 246, 0.3), 6, 0, 0, 0);
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #4a4a4a;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #faf9f6;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #faf9f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* DatePicker Styling */
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+}
+.date-picker .arrow-button .arrow {
+    -fx-background-color: #7a7a7a;
+}
+.date-picker-popup {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #faf9f6;
+}
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #e3dccf;
+}
+.date-picker-popup .spinner .button .left-arrow,
+.date-picker-popup .spinner .button .right-arrow {
+    -fx-background-color: #7a7a7a;
+}
+.date-picker-popup .day-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #4a4a4a;
+}
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #faf9f6;
+}
+.date-picker-popup .selected {
+    -fx-background-color: #799477;
+    -fx-text-fill: #ffffff;
+}
+
+/* Glowing Buttons */
+.button {
+    -fx-background-radius: 16px;
+    -fx-border-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #faf9f6;
+}
+
+.button:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to right, #799477, #059669);
+    -fx-text-fill: #ffffff;
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #34d399, #799477);
+    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.4), 10, 0, 0, 0);
+}
+
+.btn-secondary {
+    -fx-background-color: linear-gradient(to right, #7aa2a9, #658a90);
+    -fx-text-fill: #ffffff;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: linear-gradient(to right, #60a5fa, #7aa2a9);
+    -fx-effect: dropshadow(three-pass-box, rgba(59, 130, 246, 0.4), 10, 0, 0, 0);
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1px;
+    -fx-text-fill: #4a4a4a;
+}
+
+.btn-outline:hover {
+    -fx-background-color: rgba(51, 65, 85, 0.5);
+    -fx-border-color: #7a7a7a;
+    -fx-text-fill: #ffffff;
+}
+
+.btn-danger {
+    -fx-background-color: linear-gradient(to right, #c67053, #dc2626);
+    -fx-text-fill: #ffffff;
+}
+
+.btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, #f87171, #c67053);
+    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.4), 10, 0, 0, 0);
+}
+
+.btn-sm {
+    -fx-padding: 4px 10px;
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+}
+
+/* TableView */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #faf9f6;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 16px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #e3dccf;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #faf9f6 transparent;
+    -fx-size: 40px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #7a7a7a;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: transparent transparent #e3dccf transparent;
+    -fx-text-fill: #4a4a4a;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #faf9f6;
+}
+
+.table-row-cell:odd .table-cell {
+    -fx-text-fill: #4a4a4a;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #faf9f6;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #658a90;
+    -fx-text-fill: #ffffff;
+}
+
+.table-cell {
+    -fx-text-fill: #4a4a4a;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 8px;
+}
+
+/* BarChart Styling */
+.chart {
+    -fx-padding: 10px;
+}
+
+.chart-plot-background {
+    -fx-background-color: #e3dccf;
+}
+
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
+    -fx-stroke: #ffffff;
+}
+
+.axis {
+    -fx-tick-label-fill: #7a7a7a;
+    -fx-font-size: 11px;
+}
+
+.axis:left {
+    -fx-border-color: transparent #faf9f6 transparent transparent;
+}
+
+.axis:bottom {
+    -fx-border-color: #faf9f6 transparent transparent transparent;
+}
+
+.axis-label {
+    -fx-text-fill: #4a4a4a;
+}
+
+.chart-legend {
+    -fx-background-color: #e3dccf;
+    -fx-padding: 8px;
+    -fx-background-radius: 12px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #4a4a4a;
+}
+
+/* Bar Series Colors */
+.default-color0.chart-bar { -fx-bar-fill: #7aa2a9; } /* Receita Bruta - Blue */
+.default-color1.chart-bar { -fx-bar-fill: #c67053; } /* Custos - Red */
+.default-color2.chart-bar { -fx-bar-fill: #799477; } /* Lucro Líquido - Green */
+
+/* Dialog & Alerts */
+.dialog-pane {
+    -fx-background-color: #ffffff;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #e3dccf;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: #4a4a4a;
+}
