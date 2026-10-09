@@ -1,11 +1,14 @@
 package com.driverfin;
 
+import com.driverfin.controller.DashboardController;
 import com.driverfin.dao.DatabaseConnection;
 import com.driverfin.dao.DatabaseInitializer;
+import com.driverfin.dao.WorkShiftDAO;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
@@ -18,14 +21,26 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Initialize Database
             DatabaseConnection dbConn = new DatabaseConnection();
             DatabaseInitializer dbInit = new DatabaseInitializer(dbConn);
             dbInit.initDatabase();
+            dbInit.migrateOldData();
+
+            WorkShiftDAO dao = new WorkShiftDAO(dbConn);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/driverfin/view/dashboard.fxml"));
+            loader.setControllerFactory(type -> {
+                if (type == DashboardController.class) {
+                    return new DashboardController(dao, dbConn);
+                }
+                try {
+                    return type.getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/com/driverfin/css/theme-dark.css").toExternalForm());
 
@@ -41,6 +56,11 @@ public class MainApp extends Application {
             primaryStage.show();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Critical error during application startup.", e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro de Inicialização");
+            alert.setHeaderText("Falha ao iniciar o aplicativo");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
 

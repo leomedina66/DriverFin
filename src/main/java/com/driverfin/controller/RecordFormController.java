@@ -2,20 +2,23 @@ package com.driverfin.controller;
 
 import com.driverfin.dao.WorkShiftDAO;
 import com.driverfin.model.WorkShift;
+import com.driverfin.util.WorkShiftValidator;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
 import java.math.BigDecimal;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 
 public class RecordFormController {
-    @FXML private DatePicker dpDate;
-    @FXML private TextField txtTimeStart, txtTimeEnd, txtKmStart, txtKmEnd;
-    @FXML private TextField txtUber, txtApp99, txtOthers, txtFuel, txtFood;
+    @FXML private DatePicker datePicker;
+    @FXML private TextField timeStartField, timeEndField, kmStartField, kmEndField;
+    @FXML private TextField earnUberField, earn99Field, earnOthersField, costFuelField, costFoodOtherField;
+    @FXML private TextArea notesArea;
+    @FXML private Button btnSave, btnCancel;
     
     private WorkShift currentShift;
     private BigDecimal maintRate;
@@ -28,16 +31,17 @@ public class RecordFormController {
         this.dao = dao;
         
         if (ws != null) {
-            dpDate.setValue(ws.getDate());
-            txtTimeStart.setText(ws.getTimeStart().toString());
-            txtTimeEnd.setText(ws.getTimeEnd().toString());
-            txtKmStart.setText(String.valueOf(ws.getKmStart()));
-            txtKmEnd.setText(String.valueOf(ws.getKmEnd()));
-            txtUber.setText(ws.getUberEarnings().toString());
-            txtApp99.setText(ws.getApp99Earnings().toString());
-            txtOthers.setText(ws.getOtherEarnings().toString());
-            txtFuel.setText(ws.getCostFuel().toString());
-            txtFood.setText(ws.getFoodAndOtherCosts().toString());
+            datePicker.setValue(ws.getDate());
+            timeStartField.setText(ws.getTimeStart().toString());
+            timeEndField.setText(ws.getTimeEnd().toString());
+            kmStartField.setText(String.valueOf(ws.getKmStart()));
+            kmEndField.setText(String.valueOf(ws.getKmEnd()));
+            earnUberField.setText(ws.getUberEarnings().toString());
+            earn99Field.setText(ws.getApp99Earnings().toString());
+            earnOthersField.setText(ws.getOtherEarnings().toString());
+            costFuelField.setText(ws.getCostFuel().toString());
+            costFoodOtherField.setText(ws.getFoodAndOtherCosts().toString());
+            if (notesArea != null) notesArea.setText(ws.getNotes());
         }
     }
 
@@ -45,30 +49,20 @@ public class RecordFormController {
         try {
             WorkShift shift = new WorkShift();
             shift.setId(currentShift != null ? currentShift.getId() : null);
-            shift.setDate(dpDate.getValue());
-            shift.setTimeStart(LocalTime.parse(txtTimeStart.getText()));
-            shift.setTimeEnd(LocalTime.parse(txtTimeEnd.getText()));
             
-            shift.setKmStart(Double.parseDouble(txtKmStart.getText().replace(",", ".")));
-            shift.setKmEnd(Double.parseDouble(txtKmEnd.getText().replace(",", ".")));
-            
-            shift.setUberEarnings(new BigDecimal(txtUber.getText().replace(",", ".")));
-            shift.setApp99Earnings(new BigDecimal(txtApp99.getText().replace(",", ".")));
-            shift.setOtherEarnings(new BigDecimal(txtOthers.getText().replace(",", ".")));
-            shift.setCostFuel(new BigDecimal(txtFuel.getText().replace(",", ".")));
-            shift.setFoodAndOtherCosts(new BigDecimal(txtFood.getText().replace(",", ".")));
-
-            if (shift.getKmEnd() < shift.getKmStart()) {
-                throw new IllegalArgumentException("KM Final não pode ser menor que KM Inicial.");
-            }
+            WorkShiftValidator.validateAndPopulate(shift, datePicker.getValue(),
+                timeStartField.getText(), timeEndField.getText(),
+                kmStartField.getText(), kmEndField.getText(),
+                earnUberField.getText(), earn99Field.getText(), earnOthersField.getText(),
+                costFuelField.getText(), costFoodOtherField.getText(),
+                notesArea != null ? notesArea.getText() : ""
+            );
 
             dao.save(shift);
             saved = true;
             closeStage();
-        } catch (NumberFormatException e) {
-            showAlert("Erro de Formatação", "Certifique-se de digitar números válidos. Evite múltiplos pontos. " + e.getMessage());
-        } catch (DateTimeParseException e) {
-            showAlert("Erro de Horário", "Use o formato HH:mm para as horas.");
+        } catch (IllegalArgumentException e) {
+            showAlert("Erro de Validação", e.getMessage());
         } catch (Exception e) {
             showAlert("Erro ao Salvar", e.getMessage());
         }
@@ -79,7 +73,7 @@ public class RecordFormController {
     }
 
     private void closeStage() {
-        ((Stage) dpDate.getScene().getWindow()).close();
+        ((Stage) datePicker.getScene().getWindow()).close();
     }
 
     private void showAlert(String title, String msg) {

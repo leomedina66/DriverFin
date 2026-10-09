@@ -1,12 +1,13 @@
 package com.driverfin.dao;
 
 import com.driverfin.model.WorkShift;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.math.BigDecimal;
 
 public class WorkShiftDAO {
     private final DatabaseConnection dbConnection;
@@ -18,7 +19,6 @@ public class WorkShiftDAO {
     public List<WorkShift> findAll() throws SQLException {
         List<WorkShift> shifts = new ArrayList<>();
         String sql = "SELECT * FROM work_shifts ORDER BY date DESC, time_start DESC";
-
         try (Connection conn = dbConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -30,33 +30,24 @@ public class WorkShiftDAO {
     }
 
     public void save(WorkShift shift) throws SQLException {
-        if (shift.getId() == null) {
-            insert(shift);
-        } else {
-            update(shift);
-        }
+        if (shift.getId() == null) insert(shift);
+        else update(shift);
     }
 
     private void insert(WorkShift shift) throws SQLException {
-        String sql = "INSERT INTO work_shifts (date, time_start, time_end, km_start, km_end, " +
-                     "uber_earnings, app99_earnings, other_earnings, cost_fuel, food_and_other_costs, notes) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO work_shifts (date, time_start, time_end, km_start, km_end, uber_earnings, app99_earnings, other_earnings, cost_fuel, food_and_other_costs, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setPreparedStatementArgs(pstmt, shift);
             pstmt.executeUpdate();
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    shift.setId(rs.getLong(1));
-                }
+                if (rs.next()) shift.setId(rs.getLong(1));
             }
         }
     }
 
     private void update(WorkShift shift) throws SQLException {
-        String sql = "UPDATE work_shifts SET date=?, time_start=?, time_end=?, km_start=?, km_end=?, " +
-                     "uber_earnings=?, app99_earnings=?, other_earnings=?, cost_fuel=?, food_and_other_costs=?, notes=? " +
-                     "WHERE id=?";
+        String sql = "UPDATE work_shifts SET date=?, time_start=?, time_end=?, km_start=?, km_end=?, uber_earnings=?, app99_earnings=?, other_earnings=?, cost_fuel=?, food_and_other_costs=?, notes=? WHERE id=?";
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             setPreparedStatementArgs(pstmt, shift);
@@ -80,12 +71,12 @@ public class WorkShiftDAO {
         pstmt.setString(3, shift.getTimeEnd().toString());
         pstmt.setDouble(4, shift.getKmStart());
         pstmt.setDouble(5, shift.getKmEnd());
-        pstmt.setDouble(6, shift.getUberEarnings().doubleValue());
-        pstmt.setDouble(7, shift.getApp99Earnings().doubleValue());
-        pstmt.setDouble(8, shift.getOtherEarnings().doubleValue());
-        pstmt.setDouble(9, shift.getCostFuel().doubleValue());
-        pstmt.setDouble(10, shift.getFoodAndOtherCosts().doubleValue());
-        pstmt.setString(11, shift.getNotes());
+        pstmt.setLong(6, shift.getUberEarnings().multiply(new BigDecimal("100")).longValue());
+        pstmt.setLong(7, shift.getApp99Earnings().multiply(new BigDecimal("100")).longValue());
+        pstmt.setLong(8, shift.getOtherEarnings().multiply(new BigDecimal("100")).longValue());
+        pstmt.setLong(9, shift.getCostFuel().multiply(new BigDecimal("100")).longValue());
+        pstmt.setLong(10, shift.getFoodAndOtherCosts().multiply(new BigDecimal("100")).longValue());
+        pstmt.setString(11, shift.getNotes() != null ? shift.getNotes() : "");
     }
 
     private WorkShift mapResultSetToWorkShift(ResultSet rs) throws SQLException {
@@ -96,11 +87,11 @@ public class WorkShiftDAO {
             LocalTime.parse(rs.getString("time_end")),
             rs.getDouble("km_start"),
             rs.getDouble("km_end"),
-            BigDecimal.valueOf(rs.getDouble("uber_earnings")),
-            BigDecimal.valueOf(rs.getDouble("app99_earnings")),
-            BigDecimal.valueOf(rs.getDouble("other_earnings")),
-            BigDecimal.valueOf(rs.getDouble("cost_fuel")),
-            BigDecimal.valueOf(rs.getDouble("food_and_other_costs")),
+            new BigDecimal(rs.getLong("uber_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
+            new BigDecimal(rs.getLong("app99_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
+            new BigDecimal(rs.getLong("other_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
+            new BigDecimal(rs.getLong("cost_fuel")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
+            new BigDecimal(rs.getLong("food_and_other_costs")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
             rs.getString("notes")
         );
     }
