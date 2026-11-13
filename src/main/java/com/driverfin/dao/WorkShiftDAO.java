@@ -4,12 +4,18 @@ import com.driverfin.model.WorkShift;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorkShiftDAO {
+    private static final Logger LOGGER = Logger.getLogger(WorkShiftDAO.class.getName());
+    private static final BigDecimal CENTS_PER_REAL = new BigDecimal("100");
     private final DatabaseConnection dbConnection;
 
     public WorkShiftDAO(DatabaseConnection dbConnection) {
@@ -23,10 +29,28 @@ public class WorkShiftDAO {
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                shifts.add(mapResultSetToWorkShift(rs));
+                try {
+                    shifts.add(mapResultSetToWorkShift(rs));
+                } catch (DateTimeException unreadable) {
+                    // One damaged row must not hide all the others. Only the id is logged, never the content.
+                    LOGGER.log(Level.WARNING, "Shift {0} skipped: its date or time cannot be read.", rs.getLong("id"));
+                }
             }
         }
         return shifts;
+    }
+
+    /**
+     * The shift with the latest date; on a tie the latest start time; on a tie the highest id (saved last).
+     * ISO dates and "HH:mm" times sort correctly as text.
+     */
+    public Optional<WorkShift> findLastShift() throws SQLException {
+        String sql = "SELECT * FROM work_shifts ORDER BY date DESC, time_start DESC, id DESC LIMIT 1";
+        try (Connection conn = dbConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            return rs.next() ? Optional.of(mapResultSetToWorkShift(rs)) : Optional.empty();
+        }
     }
 
     public void save(WorkShift shift) throws SQLException {
@@ -71,27 +95,43 @@ public class WorkShiftDAO {
         pstmt.setString(3, shift.getTimeEnd().toString());
         pstmt.setDouble(4, shift.getKmStart());
         pstmt.setDouble(5, shift.getKmEnd());
-        pstmt.setLong(6, shift.getUberEarnings().multiply(new BigDecimal("100")).longValue());
-        pstmt.setLong(7, shift.getApp99Earnings().multiply(new BigDecimal("100")).longValue());
-        pstmt.setLong(8, shift.getOtherEarnings().multiply(new BigDecimal("100")).longValue());
-        pstmt.setLong(9, shift.getCostFuel().multiply(new BigDecimal("100")).longValue());
-        pstmt.setLong(10, shift.getFoodAndOtherCosts().multiply(new BigDecimal("100")).longValue());
+        pstmt.setLong(6, toCents(shift.getUberEarnings()));
+        pstmt.setLong(7, toCents(shift.getApp99Earnings()));
+        pstmt.setLong(8, toCents(shift.getOtherEarnings()));
+        pstmt.setLong(9, toCents(shift.getCostFuel()));
+        pstmt.setLong(10, toCents(shift.getFoodAndOtherCosts()));
         pstmt.setString(11, shift.getNotes() != null ? shift.getNotes() : "");
+    }
+
+    /** Reais to cents. longValueExact throws ArithmeticException on overflow instead of wrapping silently. */
+    private static long toCents(BigDecimal reais) {
+        return reais.multiply(CENTS_PER_REAL).setScale(0, RoundingMode.HALF_UP).longValueExact();
+    }
+
+    private static BigDecimal fromCents(long cents) {
+        return BigDecimal.valueOf(cents).divide(CENTS_PER_REAL, 2, RoundingMode.HALF_UP);
+    }
+
+    /** A missing date or time is as unreadable as a malformed one: the same exception, so the row can be skipped. */
+    private static String requiredText(ResultSet rs, String column) throws SQLException {
+        String text = rs.getString(column);
+        if (text == null) throw new DateTimeException("Missing value in column " + column);
+        return text;
     }
 
     private WorkShift mapResultSetToWorkShift(ResultSet rs) throws SQLException {
         return new WorkShift(
             rs.getLong("id"),
-            LocalDate.parse(rs.getString("date")),
-            LocalTime.parse(rs.getString("time_start")),
-            LocalTime.parse(rs.getString("time_end")),
+            LocalDate.parse(requiredText(rs, "date")),
+            LocalTime.parse(requiredText(rs, "time_start")),
+            LocalTime.parse(requiredText(rs, "time_end")),
             rs.getDouble("km_start"),
             rs.getDouble("km_end"),
-            new BigDecimal(rs.getLong("uber_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
-            new BigDecimal(rs.getLong("app99_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
-            new BigDecimal(rs.getLong("other_earnings")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
-            new BigDecimal(rs.getLong("cost_fuel")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
-            new BigDecimal(rs.getLong("food_and_other_costs")).divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP),
+            fromCents(rs.getLong("uber_earnings")),
+            fromCents(rs.getLong("app99_earnings")),
+            fromCents(rs.getLong("other_earnings")),
+            fromCents(rs.getLong("cost_fuel")),
+            fromCents(rs.getLong("food_and_other_costs")),
             rs.getString("notes")
         );
     }

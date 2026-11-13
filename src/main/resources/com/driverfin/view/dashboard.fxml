@@ -12,7 +12,10 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.Region?>
@@ -21,14 +24,14 @@
 
 <BorderPane prefHeight="850.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.driverfin.controller.DashboardController">
    <center>
-      <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+      <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;">
          <content>
             <VBox spacing="20.0">
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
                </padding>
                <children>
-                  
+
                   <!-- Top Header Bar -->
                   <HBox alignment="CENTER_LEFT" spacing="15.0">
                      <children>
@@ -38,7 +41,7 @@
                               <HBox alignment="CENTER_LEFT" spacing="8.0">
                                  <children>
                                     <Label style="-fx-font-size: 24px;" text="🌿" />
-                                    <Label styleClass="title-label" text="EcoDrive">
+                                    <Label styleClass="title-label" text="DriverFin">
                                        <font>
                                           <Font name="System Bold" size="22.0" />
                                        </font>
@@ -48,103 +51,176 @@
                               <Label styleClass="subtitle-label" text="Controle Financeiro para Motoristas de Aplicativo" />
                            </children>
                         </VBox>
-                        
+
                         <Region HBox.hgrow="ALWAYS" />
-                        
-                        <!-- Period Selector & Custom Dates -->
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                           <children>
-                              <Label style="-fx-text-fill: #94a3b8;" text="Período:" />
-                              <ComboBox fx:id="periodComboBox" prefWidth="150.0" />
-                              <DatePicker fx:id="startDatePicker" prefWidth="135.0" promptText="Data Início" visible="false" managed="false" />
-                              <DatePicker fx:id="endDatePicker" prefWidth="135.0" promptText="Data Fim" visible="false" managed="false" />
-                           </children>
-                        </HBox>
-                        
+
+                        <!-- Short message after save / delete (disappears by itself) -->
+                        <Label fx:id="lblStatus" managed="false" styleClass="text-muted" visible="false" />
+
                         <!-- Header Action Buttons -->
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                            <children>
-                              <Button fx:id="btnBackup" onAction="#handleBackup" styleClass="btn-outline" text="💾 Backup" />
-                              <Button fx:id="btnPdfReport" onAction="#handleExportPdf" styleClass="btn-secondary" text="📄 Relatório PDF" />
-                              <Button fx:id="btnNewRecord" onAction="#handleNewRecord" styleClass="btn-primary" text="➕ Novo Registro" />
+                              <Button fx:id="btnBackup" onAction="#handleBackup" styleClass="btn-outline" text="💾 Backup">
+                                 <tooltip>
+                                    <Tooltip text="Backup (Ctrl+B)" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="btnPdfReport" onAction="#handleExportPdf" styleClass="btn-secondary" text="📄 Relatório PDF">
+                                 <tooltip>
+                                    <Tooltip text="Relatório PDF (Ctrl+P)" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="btnNewRecord" onAction="#handleNewRecord" styleClass="btn-primary" text="➕ Novo Turno">
+                                 <tooltip>
+                                    <Tooltip text="Novo Turno (Ctrl+N)" />
+                                 </tooltip>
+                              </Button>
                            </children>
                         </HBox>
                      </children>
                   </HBox>
 
-                  <!-- Settings Bar & Live Search -->
-                  <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="card">
+                  <!-- Today summary (S-1): values when there is a shift today, a call to action otherwise -->
+                  <VBox fx:id="todayCard" managed="false" spacing="10.0" styleClass="today-card" visible="false">
+                     <children>
+                        <Label fx:id="lblTodayTitle" styleClass="today-title" />
+                        <HBox fx:id="todayValuesBox" alignment="BOTTOM_LEFT" spacing="48.0">
+                           <children>
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label styleClass="today-metric-label" text="LUCRO DE HOJE" />
+                                    <Label fx:id="lblTodayProfit" styleClass="today-profit" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label styleClass="today-metric-label" text="HORAS" />
+                                    <Label fx:id="lblTodayHours" styleClass="today-metric-value" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label styleClass="today-metric-label" text="FATURAMENTO POR HORA" />
+                                    <Label fx:id="lblTodayGrossPerHour" styleClass="today-metric-value" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Label fx:id="lblTodayGross" managed="false" styleClass="text-muted" visible="false" />
+                        <Label fx:id="lblTodayEmptyText" managed="false" styleClass="today-empty-text" visible="false" wrapText="true" />
+                        <Button fx:id="btnTodayNew" managed="false" onAction="#handleNewRecord" styleClass="btn-primary" visible="false" />
+                     </children>
+                  </VBox>
+
+                  <!-- Empty state (S-2): only when the database has no shift at all -->
+                  <VBox fx:id="emptyStateBox" alignment="CENTER" managed="false" spacing="14.0" styleClass="empty-state" visible="false">
+                     <children>
+                        <Label fx:id="emptyStateTitle" styleClass="empty-state-title" />
+                        <Label fx:id="emptyStateText" styleClass="empty-state-text" wrapText="true" />
+                        <Button fx:id="btnEmptyNew" onAction="#handleNewRecord" styleClass="btn-primary" text="Novo Turno" />
+                     </children>
+                  </VBox>
+
+                  <!-- Filter Row: period, custom dates and live search -->
+                  <HBox fx:id="filtersBar" alignment="CENTER_LEFT" spacing="10.0" styleClass="card">
+                     <children>
+                        <Label styleClass="text-muted" text="Período:" />
+                        <ComboBox fx:id="periodComboBox" prefWidth="150.0" />
+                        <DatePicker fx:id="startDatePicker" managed="false" prefWidth="135.0" promptText="Data Início" visible="false" />
+                        <DatePicker fx:id="endDatePicker" managed="false" prefWidth="135.0" promptText="Data Fim" visible="false" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="searchField" minWidth="260.0" prefWidth="380.0" promptText="🔍 Pesquisar por notas, data ou valor... (Ctrl+F)" />
+                     </children>
+                  </HBox>
+
+                  <!-- Maintenance reserve (S-4): the field, its error and an always visible explanation -->
+                  <VBox fx:id="maintBar" spacing="6.0" styleClass="card">
                      <children>
                         <HBox alignment="CENTER_LEFT" spacing="8.0">
                            <children>
-                              <Label style="-fx-font-weight: bold; -fx-text-fill: #cbd5e1;" text="⚙️ Taxa Manutenção:" />
-                              <TextField fx:id="maintRateField" prefWidth="75.0" promptText="0.20" text="0.20" />
-                              <Label style="-fx-text-fill: #94a3b8;" text="R$ / KM" />
+                              <Label styleClass="form-label" text="Reserva de manutenção:" />
+                              <Label styleClass="text-muted" text="R$" />
+                              <TextField fx:id="maintRateField" prefWidth="75.0" promptText="0,25" text="0,25" />
+                              <Label styleClass="text-muted" text="por km" />
+                              <Label fx:id="lblMaintError" managed="false" styleClass="field-error" visible="false" />
                            </children>
                         </HBox>
-                        <Region HBox.hgrow="ALWAYS" />
-                        <HBox alignment="CENTER_LEFT" prefWidth="380.0" spacing="8.0">
-                           <children>
-                              <TextField fx:id="searchField" promptText="🔍 Pesquisar por notas, data ou valor..." HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
+                        <Label fx:id="lblMaintHelp" styleClass="maint-help" wrapText="true" />
                      </children>
-                  </HBox>
+                  </VBox>
 
-                  <!-- 5 KPI Cards Grid -->
-                  <HBox spacing="16.0">
+                  <!-- KPI Cards: row 1 (totals) and row 2 (per hour and per km), revenue then profit -->
+                  <GridPane fx:id="kpiGrid" hgap="16.0" vgap="16.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                        <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0" />
+                     </columnConstraints>
                      <children>
-                        <!-- Card 1: Gross Income -->
-                        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                        <!-- Row 1, card 1: Gross Income -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
                            <children>
-                              <Label styleClass="kpi-title" text="RECEITA BRUTA" />
+                              <Label styleClass="kpi-title" text="FATURAMENTO BRUTO" />
                               <Label fx:id="lblGrossIncome" styleClass="kpi-value-gross" text="R$ 0,00" />
-                              <Label styleClass="kpi-subtext" text="Ganhos Uber + 99 + Outros" />
+                              <Label styleClass="kpi-subtext" text="Ganhos Uber + 99 + Outros" wrapText="true" />
                            </children>
                         </VBox>
-                        
-                        <!-- Card 2: Direct Costs -->
-                        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+
+                        <!-- Row 1, card 2: Direct Costs -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
                            <children>
-                              <Label styleClass="kpi-title" text="CUSTOS DIRETO" />
+                              <Label styleClass="kpi-title" text="CUSTOS DIRETOS" />
                               <Label fx:id="lblTotalCosts" styleClass="kpi-value-costs" text="R$ 0,00" />
-                              <Label styleClass="kpi-subtext" text="Combustível + Alimentação" />
+                              <Label styleClass="kpi-subtext" text="Combustível + Alimentação" wrapText="true" />
                            </children>
                         </VBox>
-                        
-                        <!-- Card 3: Maintenance Reserve -->
-                        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+
+                        <!-- Row 1, card 3: Maintenance Reserve -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
                            <children>
                               <Label styleClass="kpi-title" text="RESERVA MANUTENÇÃO" />
                               <Label fx:id="lblMaintReserve" styleClass="kpi-value-maint" text="R$ 0,00" />
-                              <Label styleClass="kpi-subtext" text="Reserva estimada p/ pneus, óleo, etc" />
+                              <Label fx:id="lblMaintSubtext" styleClass="kpi-subtext" wrapText="true" />
                            </children>
                         </VBox>
-                        
-                        <!-- Card 4: Net Profit -->
-                        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+
+                        <!-- Row 1, card 4: Net Profit -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="3" GridPane.rowIndex="0">
                            <children>
                               <Label styleClass="kpi-title" text="LUCRO LÍQUIDO" />
                               <Label fx:id="lblNetProfit" styleClass="kpi-value-net" text="R$ 0,00" />
-                              <Label styleClass="kpi-subtext" text="Bruto - Custos - Manutenção" />
+                              <Label styleClass="kpi-subtext" text="Faturamento - Custos - Manutenção" wrapText="true" />
                            </children>
                         </VBox>
 
-                        <!-- Card 5: Efficiency -->
-                        <VBox styleClass="kpi-card" HBox.hgrow="ALWAYS">
+                        <!-- Row 2, card 1: Revenue per hour and per km -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                            <children>
-                              <Label styleClass="kpi-title" text="EFICIÊNCIA DE LUCRO" />
-                              <Label fx:id="lblProfitPerHour" styleClass="kpi-value-efficiency" text="R$ 0,00 / h" />
-                              <Label fx:id="lblProfitPerKm" styleClass="kpi-subtext" text="R$ 0,00 / km" />
+                              <Label styleClass="kpi-title" text="FATURAMENTO POR HORA E KM" />
+                              <Label fx:id="lblGrossPerHour" styleClass="kpi-value-gross-rate" text="R$ 0,00 / h" />
+                              <Label fx:id="lblGrossPerKm" styleClass="kpi-value-gross-rate" text="R$ 0,00 / km" />
+                              <Label styleClass="kpi-subtext" text="Média do período, antes dos custos" wrapText="true" />
+                           </children>
+                        </VBox>
+
+                        <!-- Row 2, card 2: Profit per hour and per km -->
+                        <VBox maxWidth="Infinity" styleClass="kpi-card" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                           <children>
+                              <Label styleClass="kpi-title" text="LUCRO POR HORA E KM" />
+                              <Label fx:id="lblProfitPerHour" styleClass="kpi-value-profit-rate" text="R$ 0,00 / h" />
+                              <Label fx:id="lblProfitPerKm" styleClass="kpi-value-profit-rate" text="R$ 0,00 / km" />
+                              <Label styleClass="kpi-subtext" text="Média do período, depois dos custos e da manutenção" wrapText="true" />
                            </children>
                         </VBox>
                      </children>
-                  </HBox>
+                  </GridPane>
 
                   <!-- Daily Evolution BarChart -->
-                  <VBox spacing="10.0" styleClass="card">
+                  <VBox fx:id="chartCard" spacing="10.0" styleClass="card">
                      <children>
-                        <Label styleClass="section-header" text="📊 Evolução Financeira Diária (Receita vs Custos vs Lucro)" />
+                        <Label styleClass="section-header" text="📊 Evolução Diária (Faturamento, Custos e Lucro)" />
+                        <Label fx:id="lblChartEmpty" managed="false" styleClass="text-muted" text="Sem dados para o período" visible="false" />
                         <BarChart fx:id="chartDailyEvolution" animated="false" legendSide="TOP" prefHeight="260.0">
                            <xAxis>
                               <CategoryAxis fx:id="xAxis" label="Data" />
@@ -156,27 +232,30 @@
                      </children>
                   </VBox>
 
-                  <!-- Records TableView -->
-                  <VBox spacing="10.0" styleClass="card" VBox.vgrow="ALWAYS">
+                  <!-- Shifts TableView -->
+                  <VBox fx:id="tableCard" spacing="10.0" styleClass="card" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label styleClass="section-header" text="📋 Registros de Turno Diários" />
-                        <TableView fx:id="tableRecords" minHeight="250.0" prefHeight="320.0" VBox.vgrow="ALWAYS">
+                        <Label styleClass="section-header" text="📋 Turnos" />
+                        <TableView fx:id="tableRecords" minHeight="250.0" prefHeight="320.0" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                            <columns>
-                              <TableColumn fx:id="colDate" prefWidth="100.0" text="Data" />
-                              <TableColumn fx:id="colHours" prefWidth="90.0" text="Horas (h)" />
-                              <TableColumn fx:id="colKm" prefWidth="90.0" text="KM Total" />
-                              <TableColumn fx:id="colGross" prefWidth="110.0" text="Bruto (R$)" />
-                              <TableColumn fx:id="colCosts" prefWidth="110.0" text="Custos (R$)" />
-                              <TableColumn fx:id="colMaint" prefWidth="110.0" text="Manut. (R$)" />
-                              <TableColumn fx:id="colNet" prefWidth="110.0" text="Líquido (R$)" />
-                              <TableColumn fx:id="colProfitPerHour" prefWidth="100.0" text="R$ / Horas" />
-                              <TableColumn fx:id="colProfitPerKm" prefWidth="100.0" text="R$ / KM" />
-                              <TableColumn fx:id="colActions" prefWidth="140.0" text="Ações" />
+                              <TableColumn fx:id="colDate" minWidth="100.0" prefWidth="110.0" text="Data" />
+                              <TableColumn fx:id="colActions" minWidth="150.0" prefWidth="170.0" text="Ações" />
+                              <TableColumn fx:id="colHours" minWidth="85.0" prefWidth="90.0" text="Horas (h)" />
+                              <TableColumn fx:id="colKm" minWidth="85.0" prefWidth="95.0" text="KM Total" />
+                              <TableColumn fx:id="colGross" minWidth="110.0" prefWidth="125.0" text="Faturamento" />
+                              <TableColumn fx:id="colCosts" minWidth="85.0" prefWidth="100.0" text="Custos" />
+                              <TableColumn fx:id="colMaint" minWidth="85.0" prefWidth="120.0" text="Manutenção" />
+                              <TableColumn fx:id="colNet" minWidth="110.0" prefWidth="115.0" text="Lucro" />
+                              <TableColumn fx:id="colProfitPerHour" minWidth="110.0" prefWidth="115.0" text="Lucro / h" />
+                              <TableColumn fx:id="colProfitPerKm" minWidth="110.0" prefWidth="115.0" text="Lucro / km" />
+                              <TableColumn fx:id="colGrossPerHour" minWidth="85.0" prefWidth="140.0" text="Faturamento / h" />
+                              <TableColumn fx:id="colGrossPerKm" minWidth="85.0" prefWidth="140.0" text="Faturamento / km" />
                            </columns>
                            <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                              <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
+                        <Label fx:id="lblShortcutsHint" styleClass="shortcut-hint" wrapText="true" />
                      </children>
                   </VBox>
 

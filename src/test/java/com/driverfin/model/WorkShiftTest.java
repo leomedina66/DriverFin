@@ -60,11 +60,38 @@ public class WorkShiftTest {
 
     @Test
     public void testCalculateMaintReserve() {
-        assertEquals(new BigDecimal("37.500"), shift.calculateMaintReserve(new BigDecimal("0.25")));
+        assertEquals(new BigDecimal("37.50"), shift.calculateMaintReserve(new BigDecimal("0.25")));
     }
 
     @Test
     public void testCalculateNetProfitWithMaint() {
-        assertEquals(new BigDecimal("202.500"), shift.calculateNetProfit(new BigDecimal("0.25")));
+        assertEquals(new BigDecimal("202.50"), shift.calculateNetProfit(new BigDecimal("0.25")));
+    }
+
+    @Test
+    public void testCalculateKmHasNoBinaryNoise() {
+        shift.setKmStart(10000.1);
+        shift.setKmEnd(10150.3);
+        assertEquals(new BigDecimal("150.2"), shift.calculateKmExact());
+        assertEquals(150.2, shift.calculateKm());
+    }
+
+    @Test
+    public void testCalculateGrossPerHour() {
+        // 300.00 / 8.5h = 35.294...
+        assertEquals(new BigDecimal("35.29"), shift.calculateGrossPerHour());
+    }
+
+    @Test
+    public void testCalculateGrossPerKm() {
+        assertEquals(new BigDecimal("2.00"), shift.calculateGrossPerKm());
+    }
+
+    @Test
+    public void testGrossPerHourAndKmAreZeroWithoutDivisor() {
+        shift.setTimeEnd(shift.getTimeStart());
+        shift.setKmEnd(shift.getKmStart());
+        assertEquals(0, BigDecimal.ZERO.compareTo(shift.calculateGrossPerHour()));
+        assertEquals(0, BigDecimal.ZERO.compareTo(shift.calculateGrossPerKm()));
     }
 }

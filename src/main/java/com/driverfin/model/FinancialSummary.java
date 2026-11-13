@@ -9,6 +9,8 @@ public record FinancialSummary(
     BigDecimal totalNet,
     BigDecimal avgProfitPerHour,
     BigDecimal avgProfitPerKm,
+    BigDecimal avgGrossPerHour,
+    BigDecimal avgGrossPerKm,
     double totalHours,
     double totalKm
 ) {}

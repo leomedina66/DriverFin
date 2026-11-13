@@ -1,39 +1,97 @@
-/* theme-dark.css - Dark Theme for DriverFin */
+/*
+ * theme-dark.css - DriverFin theme.
+ * NOTE: the file name is historical. The real theme is LIGHT (beige / white).
+ * It keeps the name only because MainApp references it. Do not turn it into a dark theme.
+ *
+ * Colors are defined once on .root (looked-up colors) and reused everywhere.
+ * Contrast ratios (WCAG) for every text/background pair are listed in docs/design/UI.md.
+ */
 
 .root {
+    /* Surfaces */
+    -c-bg: #e3dccf;
+    -c-surface: #ffffff;
+    -c-surface-alt: #faf9f6;
+    -c-calc-bg: #d8e0d5;
+    -c-border: #8a8473;
+    -c-border-soft: #d1c9b8;
+    -c-scroll-thumb: #7a7463;  /* >= 3:1 on beige */
+
+    /* Text */
+    -c-text: #4a4a4a;
+    -c-muted: #595959;
+    -c-prompt: #767676;        /* placeholder text, white fields only (4.54:1) */
+    -c-on-dark: #ffffff;
+
+    /* Idea families (all >= 4.5:1 on white, beige and #d8e0d5) */
+    -c-revenue: #3d6166;       /* faturamento: teal */
+    -c-revenue-dark: #2f5156;
+    -c-profit: #4a6648;        /* lucro: green */
+    -c-profit-dark: #3b5539;
+    -c-cost: #9a4529;          /* custos: terracotta */
+    -c-cost-dark: #8a3a20;
+    -c-maint: #85560f;         /* manutencao: amber */
+
+    /* Form label hues */
+    -c-uber: #1e4a9a;
+    -c-99: #0a6285;
+    -c-fuel: #8a4b08;          /* dark orange-brown (NOT red: red = error only) */
+    -c-food: #6e4630;          /* brown */
+
+    /* Interaction */
+    -c-focus: #3d6166;
+    -c-select: #3f6469;
+    -c-error: #c62828;      /* borders (>= 3:1) */
+    -c-error-text: #a61e1e; /* error text (>= 4.5:1 on white, beige, calc) */
+    -c-warn-bg: #fdf1d6;    /* soft warning background */
+
     -fx-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
     -fx-font-size: 13px;
-    -fx-background-color: #e3dccf;
-    -fx-text-fill: #4a4a4a;
+    -fx-background-color: -c-bg;
+    -fx-text-fill: -c-text;
+}
+
+.root-pane {
+    -fx-background-color: -c-bg;
 }
 
 /* ScrollPane */
 .scroll-pane {
     -fx-background-color: transparent;
-    -fx-background: #e3dccf;
+    -fx-background: -c-bg;
 }
 
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
 
-/* Custom ScrollBar */
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
 .scroll-bar:vertical,
 .scroll-bar:horizontal {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
+    -fx-padding: 2px;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #faf9f6;
+    -fx-background-color: -c-scroll-thumb;
     -fx-background-radius: 12px;
 }
 
 .scroll-bar .thumb:hover {
-    -fx-background-color: #e2e8f0;
+    -fx-background-color: -c-muted;
 }
 
 .scroll-bar .track {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
 }
 
 .scroll-bar .decrement-button,
@@ -42,33 +100,36 @@
     -fx-padding: 0;
 }
 
-/* Headings & Text */
-.text {
-    -fx-fill: #4a4a4a;
-}
+/* Headings & text.
+ * Do NOT add a '.text { -fx-fill: ... }' rule: it paints the inner Text node of every
+ * Label and Button and overrides each class's -fx-text-fill (it made the colored buttons unreadable). */
 
 .title-label {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
 }
 
 .subtitle-label {
     -fx-font-size: 12px;
-    -fx-text-fill: #7a7a7a;
+    -fx-text-fill: -c-muted;
 }
 
 .section-header {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
 }
 
-/* Glassmorphic / Dark Cards */
+.text-muted {
+    -fx-text-fill: -c-muted;
+}
+
+/* Cards */
 .card {
-    -fx-background-color: #ffffff;
+    -fx-background-color: -c-surface;
     -fx-background-radius: 12px;
-    -fx-border-color: #faf9f6;
+    -fx-border-color: -c-border-soft;
     -fx-border-radius: 12px;
     -fx-border-width: 1px;
     -fx-padding: 16px;
@@ -76,9 +137,9 @@
 }
 
 .kpi-card {
-    -fx-background-color: linear-gradient(to bottom right, #ffffff, #e3dccf);
+    -fx-background-color: linear-gradient(to bottom right, -c-surface, -c-bg);
     -fx-background-radius: 12px;
-    -fx-border-color: #faf9f6;
+    -fx-border-color: -c-border-soft;
     -fx-border-radius: 12px;
     -fx-border-width: 1px;
     -fx-padding: 16px;
@@ -86,167 +147,334 @@
 }
 
 .kpi-card:hover {
-    -fx-border-color: #e2e8f0;
+    -fx-border-color: -c-border;
 }
 
 .kpi-title {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #7a7a7a;
+    -fx-text-fill: -c-muted;
 }
 
 .kpi-value-gross {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #7aa2a9; /* Blue Revenue */
+    -fx-text-fill: -c-revenue;
+}
+
+.kpi-value-gross-rate {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-revenue;
 }
 
 .kpi-value-costs {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #c67053; /* Red Cost */
+    -fx-text-fill: -c-cost;
 }
 
 .kpi-value-maint {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #d9a05b; /* Amber Maintenance */
+    -fx-text-fill: -c-maint;
 }
 
 .kpi-value-net {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-text-fill: #799477; /* Emerald Green Profit */
+    -fx-text-fill: -c-profit;
 }
 
+.kpi-value-profit-rate {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-profit;
+}
+
+/* Kept for compatibility: efficiency now uses the profit color */
 .kpi-value-efficiency {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #8b5cf6; /* Purple Efficiency */
+    -fx-text-fill: -c-profit;
 }
 
 .kpi-subtext {
     -fx-font-size: 11px;
-    -fx-text-fill: #64748b;
+    -fx-text-fill: -c-muted;
 }
 
-/* Form / Input Controls */
+/* Form labels */
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-text;
+}
+
+.form-label-uber { -fx-font-weight: bold; -fx-text-fill: -c-uber; }
+.form-label-99   { -fx-font-weight: bold; -fx-text-fill: -c-99; }
+.form-label-fuel { -fx-font-weight: bold; -fx-text-fill: -c-fuel; }  /* orange-brown */
+.form-label-food { -fx-font-weight: bold; -fx-text-fill: -c-food; }
+
+/* Real-time calculation block (background #d8e0d5) */
+.calc-caption {
+    -fx-font-size: 11px;
+    -fx-text-fill: -c-muted;
+}
+
+.calc-value {
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-text;
+}
+
+.calc-value-gross { -fx-font-weight: bold; -fx-text-fill: -c-revenue; }
+.calc-value-costs { -fx-font-weight: bold; -fx-text-fill: -c-cost; }
+.calc-value-maint { -fx-font-weight: bold; -fx-text-fill: -c-maint; }
+.calc-value-net   { -fx-font-weight: bold; -fx-text-fill: -c-profit; }
+
+/* Input controls */
 .text-field, .text-area, .date-picker, .combo-box {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #4a4a4a;
-    -fx-border-color: #d1c9b8;
+    -fx-background-color: -c-surface;
+    -fx-text-fill: -c-text;
+    -fx-border-color: -c-border;
     -fx-border-radius: 6px;
     -fx-background-radius: 12px;
     -fx-padding: 8px 12px;
-    -fx-prompt-text-fill: #a0a0a0;
+    -fx-prompt-text-fill: -c-prompt;
+}
+
+/* Placeholder: lighter, italic, normal weight, clearly different from typed text (-c-text) */
+.text-field, .text-area, .date-picker > .text-field, .combo-box > .text-field {
+    -fx-prompt-text-fill: -c-prompt;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-prompt-text-fill: -c-prompt;
+}
+
+/* Hide the nested text-field box inside DatePicker / editable ComboBox:
+ * the outline belongs to the outer control only. */
+.date-picker, .combo-box {
+    -fx-padding: 0;
+}
+
+.date-picker > .text-field,
+.combo-box > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: null;
+    -fx-padding: 8px 12px;
+}
+
+.date-picker > .text-field:focused,
+.combo-box > .text-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: null;
+}
+
+.date-picker > .arrow-button,
+.combo-box > .arrow-button {
+    -fx-padding: 0 12px 0 4px;
+}
+
+/* TextArea: no weak line at the top, the outline is on the control */
+.text-area {
+    -fx-padding: 0;
+}
+
+.text-area .scroll-pane,
+.text-area .scroll-pane .viewport,
+.text-area .content {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.text-area .content {
+    -fx-padding: 8px 12px;
 }
 
 .text-field:focused, .text-area:focused, .combo-box:focused, .date-picker:focused {
-    -fx-border-color: #7aa2a9;
-    -fx-effect: dropshadow(three-pass-box, rgba(59, 130, 246, 0.3), 6, 0, 0, 0);
+    -fx-border-color: -c-focus;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(61, 97, 102, 0.45), 6, 0, 0, 0);
+}
+
+.text-field.input-error {
+    -fx-border-color: -c-error;
+    -fx-border-width: 2px;
+}
+
+.text-field:disabled, .text-area:disabled, .combo-box:disabled, .date-picker:disabled {
+    -fx-opacity: 0.6;
 }
 
 .combo-box .list-cell {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #4a4a4a;
+    -fx-background-color: -c-surface;
+    -fx-text-fill: -c-text;
 }
 
 .combo-box-popup .list-view {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #faf9f6;
+    -fx-background-color: -c-surface;
+    -fx-border-color: -c-border;
 }
 
-.combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #faf9f6;
-    -fx-text-fill: #ffffff;
+.combo-box-popup .list-view .list-cell {
+    -fx-text-fill: -c-text;
 }
 
-/* DatePicker Styling */
+.combo-box-popup .list-view .list-cell:hover,
+.combo-box-popup .list-view .list-cell:focused,
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -c-select;
+    -fx-text-fill: -c-on-dark;
+}
+
+/* DatePicker */
 .date-picker .arrow-button {
     -fx-background-color: transparent;
 }
 .date-picker .arrow-button .arrow {
-    -fx-background-color: #7a7a7a;
+    -fx-background-color: -c-muted;
 }
 .date-picker-popup {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #faf9f6;
+    -fx-background-color: -c-surface;
+    -fx-border-color: -c-border;
 }
 .date-picker-popup .month-year-pane {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
 }
 .date-picker-popup .spinner .button .left-arrow,
 .date-picker-popup .spinner .button .right-arrow {
-    -fx-background-color: #7a7a7a;
+    -fx-background-color: -c-muted;
 }
 .date-picker-popup .day-cell {
-    -fx-background-color: #ffffff;
-    -fx-text-fill: #4a4a4a;
+    -fx-background-color: -c-surface;
+    -fx-text-fill: -c-text;
 }
 .date-picker-popup .day-cell:hover {
-    -fx-background-color: #faf9f6;
+    -fx-background-color: -c-bg;
+}
+.date-picker-popup .day-cell:focused {
+    -fx-border-color: -c-focus;
+    -fx-border-width: 2px;
 }
 .date-picker-popup .selected {
-    -fx-background-color: #799477;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-select;
+    -fx-text-fill: -c-on-dark;
 }
 
-/* Glowing Buttons */
+/* Buttons (generic .button = quiet: dark text on light surface) */
 .button {
     -fx-background-radius: 16px;
-    -fx-border-radius: 8px;
+    -fx-border-radius: 16px;
     -fx-font-weight: bold;
     -fx-padding: 8px 16px;
     -fx-cursor: hand;
-    -fx-text-fill: #ffffff;
-    -fx-background-color: #faf9f6;
+    -fx-text-fill: -c-text;
+    -fx-background-color: -c-surface-alt;
+    -fx-border-color: -c-border;
+    -fx-border-width: 1px;
 }
 
 .button:hover {
-    -fx-background-color: #e2e8f0;
+    -fx-background-color: -c-bg;
+}
+
+.button:pressed {
+    -fx-background-color: -c-border-soft;
+}
+
+.button:focused {
+    -fx-border-color: -c-focus;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(61, 97, 102, 0.55), 6, 0, 0, 0);
+}
+
+.button:disabled {
+    -fx-opacity: 0.5;
+    -fx-cursor: default;
 }
 
 .btn-primary {
-    -fx-background-color: linear-gradient(to right, #799477, #059669);
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-profit;
+    -fx-border-color: -c-profit;
+    -fx-text-fill: -c-on-dark;
 }
 
 .btn-primary:hover {
-    -fx-background-color: linear-gradient(to right, #34d399, #799477);
-    -fx-effect: dropshadow(three-pass-box, rgba(16, 185, 129, 0.4), 10, 0, 0, 0);
+    -fx-background-color: -c-profit-dark;
+    -fx-border-color: -c-profit-dark;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: -c-profit-dark;
 }
 
 .btn-secondary {
-    -fx-background-color: linear-gradient(to right, #7aa2a9, #658a90);
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-revenue;
+    -fx-border-color: -c-revenue;
+    -fx-text-fill: -c-on-dark;
 }
 
 .btn-secondary:hover {
-    -fx-background-color: linear-gradient(to right, #60a5fa, #7aa2a9);
-    -fx-effect: dropshadow(three-pass-box, rgba(59, 130, 246, 0.4), 10, 0, 0, 0);
+    -fx-background-color: -c-revenue-dark;
+    -fx-border-color: -c-revenue-dark;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: -c-revenue-dark;
 }
 
 .btn-outline {
     -fx-background-color: transparent;
-    -fx-border-color: #e2e8f0;
+    -fx-border-color: -c-muted;   /* #595959: 5.14 on beige (-c-border was only 2.74) */
     -fx-border-width: 1px;
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
 }
 
 .btn-outline:hover {
-    -fx-background-color: rgba(51, 65, 85, 0.5);
-    -fx-border-color: #7a7a7a;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-bg;
+    -fx-border-color: -c-text;
+    -fx-text-fill: -c-text;
+}
+
+/* Outline used as the main call to action of a screen (header "Novo Turno"):
+ * same family as btn-primary (green), so it is told apart from the neutral outline (Backup). */
+#btnNewRecord.btn-outline {
+    -fx-border-color: -c-profit;
+    -fx-text-fill: -c-profit;
+}
+
+#btnNewRecord.btn-outline:hover {
+    -fx-background-color: -c-bg;
+    -fx-border-color: -c-profit-dark;
+    -fx-text-fill: -c-profit-dark;
 }
 
 .btn-danger {
-    -fx-background-color: linear-gradient(to right, #c67053, #dc2626);
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-cost;
+    -fx-border-color: -c-cost;
+    -fx-text-fill: -c-on-dark;
 }
 
 .btn-danger:hover {
-    -fx-background-color: linear-gradient(to right, #f87171, #c67053);
-    -fx-effect: dropshadow(three-pass-box, rgba(239, 68, 68, 0.4), 10, 0, 0, 0);
+    -fx-background-color: -c-cost-dark;
+    -fx-border-color: -c-cost-dark;
+}
+
+.btn-danger:pressed {
+    -fx-background-color: -c-cost-dark;
+}
+
+/* Focus ring wins over the variant border (declared last) */
+.btn-primary:focused, .btn-secondary:focused, .btn-outline:focused, .btn-danger:focused {
+    -fx-border-color: -c-text;
+    -fx-border-width: 2px;
 }
 
 .btn-sm {
@@ -258,111 +486,434 @@
 /* TableView */
 .table-view {
     -fx-background-color: transparent;
-    -fx-border-color: #faf9f6;
+    -fx-border-color: -c-border-soft;
     -fx-border-radius: 8px;
     -fx-background-radius: 16px;
 }
 
+.table-view:focused {
+    -fx-border-color: -c-focus;
+    -fx-border-width: 2px;
+}
+
 .table-view .column-header-background {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
     -fx-background-radius: 8px 8px 0 0;
 }
 
 .table-view .column-header, .table-view .filler {
     -fx-background-color: transparent;
-    -fx-border-color: transparent transparent #faf9f6 transparent;
+    -fx-border-color: transparent transparent -c-border transparent;
     -fx-size: 40px;
 }
 
+/* Column menu button (top-right corner of the header): arrow #595959 on beige = 5.14 */
+.table-view .show-hide-columns-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8px;
+    -fx-cursor: hand;
+}
+
+.table-view .show-hide-columns-button .show-hide-column-image {
+    -fx-background-color: -c-muted;
+    -fx-padding: 5px 6px;
+}
+
+.table-view .show-hide-columns-button:hover,
+.table-view .show-hide-columns-button:focused {
+    -fx-background-color: -c-border-soft;
+    -fx-background-radius: 6px;
+}
+
+.table-view .show-hide-columns-button:hover .show-hide-column-image,
+.table-view .show-hide-columns-button:focused .show-hide-column-image {
+    -fx-background-color: -c-text;
+}
+
+.table-view .corner {
+    -fx-background-color: -c-bg;
+}
+
+/* Horizontal bar of the table: thin but visible thumb (3.42 on beige) */
+.table-view .scroll-bar:horizontal {
+    -fx-padding: 3px 2px;
+}
+
 .table-view .column-header .label {
-    -fx-text-fill: #7a7a7a;
+    -fx-text-fill: -c-muted;
     -fx-font-weight: bold;
     -fx-alignment: CENTER-LEFT;
 }
 
 .table-row-cell {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #e3dccf transparent;
-    -fx-text-fill: #4a4a4a;
+    -fx-background-color: -c-surface;
+    -fx-border-color: transparent transparent -c-bg transparent;
+    -fx-text-fill: -c-text;
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #faf9f6;
-}
-
-.table-row-cell:odd .table-cell {
-    -fx-text-fill: #4a4a4a;
+    -fx-background-color: -c-surface-alt;
 }
 
 .table-row-cell:hover {
-    -fx-background-color: #faf9f6;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #658a90;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: -c-surface-alt;
 }
 
 .table-cell {
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
     -fx-alignment: CENTER-LEFT;
     -fx-padding: 8px;
 }
 
-/* BarChart Styling */
+.table-row-cell:selected,
+.table-row-cell:odd:selected {
+    -fx-background-color: -c-select;
+}
+
+.table-row-cell:selected .table-cell,
+.table-row-cell:odd:selected .table-cell {
+    -fx-text-fill: -c-on-dark;
+}
+
+/* BarChart */
 .chart {
     -fx-padding: 10px;
 }
 
 .chart-plot-background {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
 }
 
 .chart-vertical-grid-lines, .chart-horizontal-grid-lines {
-    -fx-stroke: #ffffff;
+    -fx-stroke: -c-surface;
 }
 
 .axis {
-    -fx-tick-label-fill: #7a7a7a;
+    -fx-tick-label-fill: -c-muted;
     -fx-font-size: 11px;
 }
 
 .axis:left {
-    -fx-border-color: transparent #faf9f6 transparent transparent;
+    -fx-border-color: transparent -c-border transparent transparent;
 }
 
 .axis:bottom {
-    -fx-border-color: #faf9f6 transparent transparent transparent;
+    -fx-border-color: -c-border transparent transparent transparent;
 }
 
 .axis-label {
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
 }
 
 .chart-legend {
-    -fx-background-color: #e3dccf;
-    -fx-padding: 8px;
+    -fx-background-color: -c-bg;
+    -fx-padding: 8px 16px;
     -fx-background-radius: 12px;
+    -fx-hgap: 24px;
+    -fx-tile-alignment: CENTER;
+    -fx-vgap: 8px;
 }
 
 .chart-legend-item {
-    -fx-text-fill: #4a4a4a;
+    -fx-text-fill: -c-text;
+    -fx-padding: 0;
+    -fx-alignment: CENTER;   /* tiles share one width; centering evens the gaps */
+    -fx-graphic-text-gap: 8px;
 }
 
-/* Bar Series Colors */
-.default-color0.chart-bar { -fx-bar-fill: #7aa2a9; } /* Receita Bruta - Blue */
-.default-color1.chart-bar { -fx-bar-fill: #c67053; } /* Custos - Red */
-.default-color2.chart-bar { -fx-bar-fill: #799477; } /* Lucro Líquido - Green */
+.chart-legend-item-symbol {
+    -fx-background-radius: 3px;
+}
 
-/* Dialog & Alerts */
+/* Series: 0 = Faturamento (teal), 1 = Custos (terracotta), 2 = Lucro (green) */
+.default-color0.chart-bar { -fx-bar-fill: -c-revenue; }
+.default-color1.chart-bar { -fx-bar-fill: -c-cost; }
+.default-color2.chart-bar { -fx-bar-fill: -c-profit; }
+
+/* Legend symbol carries the default-colorN class in JavaFX */
+.chart-legend-item-symbol.default-color0 { -fx-background-color: -c-revenue; }
+.chart-legend-item-symbol.default-color1 { -fx-background-color: -c-cost; }
+.chart-legend-item-symbol.default-color2 { -fx-background-color: -c-profit; }
+
+/* Dialogs & alerts (declared after .root so they win) */
 .dialog-pane {
-    -fx-background-color: #ffffff;
+    -fx-background-color: -c-surface;
+    -fx-font-size: 13px;
 }
 
 .dialog-pane .header-panel {
-    -fx-background-color: #e3dccf;
+    -fx-background-color: -c-bg;
 }
 
-.dialog-pane .label {
-    -fx-text-fill: #4a4a4a;
+.dialog-pane .header-panel .label {
+    -fx-text-fill: -c-text;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .label,
+.dialog-pane .content.label {
+    -fx-text-fill: -c-text;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-text-fill: -c-text;
+    -fx-background-color: -c-surface-alt;
+}
+
+.dialog-pane .button-bar .button:default {
+    -fx-background-color: -c-profit;
+    -fx-border-color: -c-profit;
+    -fx-text-fill: -c-on-dark;
+}
+
+.dialog-pane .button-bar .button:default:hover {
+    -fx-background-color: -c-profit-dark;
+}
+
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: -c-bg;
+}
+
+/* ===== Data entry (T11) ===== */
+
+/* Fixed hint above the first money field */
+.money-hint {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-muted;
+    -fx-padding: 4px 0 4px 0;
+}
+
+/* "R$" prefix and "km" suffix next to fields */
+.input-affix {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-muted;
+    -fx-padding: 0 4px 0 4px;
+}
+
+/* Per-field error message (always pair with .input-error on the field; text is the 2nd signal) */
+.field-error {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-error-text;
+}
+
+/* Soft, non-blocking warning (also midnight notice). Put a warning sign in the text. */
+.field-warning {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-maint;
+    -fx-background-color: -c-warn-bg;
+    -fx-border-color: -c-maint;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 4px 8px;
+}
+
+/* Neutral hint (suggested KM, automatic comma) */
+.field-info {
+    -fx-font-size: 11px;
+    -fx-text-fill: -c-muted;
+}
+
+/* Calculation block */
+.calc-block {
+    -fx-background-color: -c-calc-bg;
+    -fx-background-radius: 12px;
+    -fx-padding: 12px 16px;
+}
+
+.calc-value-large {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* Color of the large value comes from the pair class: calc-value-gross / calc-value-net */
+
+/* ===== Dashboard S-1 to S-4 (T11) ===== */
+
+.today-card {
+    -fx-background-color: -c-surface;
+    -fx-background-radius: 12px;
+    -fx-border-color: -c-border-soft;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+    -fx-padding: 12px 16px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.25), 10, 0, 0, 4);
+}
+
+/* One-line summary ("Faturamento: R$ X . N turno(s)"): body size, no extra padding */
+.today-card .text-muted {
+    -fx-font-size: 13px;
+    -fx-padding: 0;
+}
+
+.today-title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-muted;
+}
+
+/* Largest text of the app (32px > KPI 20px). Green = profit. */
+.today-profit {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-profit;
+}
+
+/* Loss: terracotta; the text must also say "(prejuizo)" */
+.today-profit-negative {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-cost;
+}
+
+.today-metric-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-muted;
+}
+
+.today-metric-value {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-text;
+}
+
+/* "No shift today" variant: calm text, no zero values */
+.today-empty-text {
+    -fx-font-size: 15px;
+    -fx-text-fill: -c-text;
+}
+
+/* Welcoming empty state */
+.empty-state {
+    -fx-background-color: -c-surface;
+    -fx-background-radius: 16px;
+    -fx-border-color: -c-border-soft;
+    -fx-border-radius: 16px;
+    -fx-border-width: 1px;
+    -fx-padding: 32px;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 10, 0, 0, 3);
+}
+
+.empty-state-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -c-text;
+}
+
+.empty-state-text {
+    -fx-font-size: 15px;
+    -fx-text-fill: -c-muted;
+}
+
+/* Big primary button inside the empty state: <Button styleClass="btn-primary btn-lg"> is not required;
+ * .empty-state .btn-primary is enlarged automatically. */
+.empty-state .btn-primary {
+    -fx-font-size: 15px;
+    -fx-padding: 12px 32px;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+}
+
+.shortcut-hint {
+    -fx-font-size: 11px;
+    -fx-text-fill: -c-muted;
+}
+
+.maint-help {
+    -fx-font-size: 12px;
+    -fx-text-fill: -c-muted;
+}
+
+/* Focus on table rows' buttons and the search field already use the 2px teal ring. */
+
+/* ===== Review fixes (D2, D4, D5, D6, D7) ===== */
+
+/* D4 Loss: add 'value-negative' next to the value class when value < 0.
+ * Compound selectors out-rank the single-class color rules, so terracotta wins.
+ * Also say "-" / "(prejuizo)" in the text: color is not the only signal. */
+.value-negative,
+.kpi-value-gross.value-negative,
+.kpi-value-gross-rate.value-negative,
+.kpi-value-costs.value-negative,
+.kpi-value-maint.value-negative,
+.kpi-value-net.value-negative,
+.kpi-value-profit-rate.value-negative,
+.kpi-value-efficiency.value-negative,
+.calc-value.value-negative,
+.calc-value-gross.value-negative,
+.calc-value-costs.value-negative,
+.calc-value-maint.value-negative,
+.calc-value-net.value-negative,
+.today-profit.value-negative,
+.today-metric-value.value-negative,
+.table-cell.value-negative {
+    -fx-text-fill: -c-cost;
+}
+
+/* D5 Calculation block: captions and values centered on the same axis, room to breathe */
+.calc-block {
+    -fx-padding: 16px;
+}
+
+.calc-caption {
+    -fx-padding: 0 0 2px 0;
+}
+
+.calc-value, .calc-value-gross, .calc-value-costs, .calc-value-maint, .calc-value-net, .calc-value-large {
+    -fx-alignment: CENTER;
+}
+
+/* Form: fixed footer = calc-strip (above) + form-actions (below), one block.
+ * The line belongs to calc-strip only; form-actions shares its fill, so there is no double line. */
+.calc-strip {
+    -fx-background-color: -c-calc-bg;
+    -fx-border-color: -c-border-soft transparent transparent transparent;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 10px 16px;
+    -fx-spacing: 24px;
+    -fx-alignment: CENTER;
+}
+
+.calc-strip .calc-caption {
+    -fx-padding: 0;
+}
+
+.calc-strip .calc-value,
+.calc-strip .calc-value-gross,
+.calc-strip .calc-value-costs,
+.calc-strip .calc-value-maint,
+.calc-strip .calc-value-net {
+    -fx-font-size: 14px;
+}
+
+.calc-strip .calc-value-large {
+    -fx-font-size: 20px;
+}
+
+/* Warnings inside the strip: wrap, never wider than the strip (560px window) */
+.calc-strip .field-warning {
+    -fx-wrap-text: true;
+    -fx-max-width: 528px;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.form-actions {
+    -fx-background-color: -c-calc-bg;
+    -fx-padding: 8px 16px 12px 16px;
+    -fx-spacing: 8px;
+    -fx-alignment: CENTER-RIGHT;
+}
+
+/* Cancel (outline) on the green-grey footer: border #595959 = 5.18, hover fill stays readable */
+.form-actions .btn-outline:hover {
+    -fx-background-color: -c-border-soft;
+}
+
+.combo-box > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0 12px 12px 0;
 }

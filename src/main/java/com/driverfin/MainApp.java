@@ -4,6 +4,7 @@ import com.driverfin.controller.DashboardController;
 import com.driverfin.dao.DatabaseConnection;
 import com.driverfin.dao.DatabaseInitializer;
 import com.driverfin.dao.WorkShiftDAO;
+import com.driverfin.util.Styles;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,7 +43,7 @@ public class MainApp extends Application {
             
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/com/driverfin/css/theme-dark.css").toExternalForm());
+            Styles.apply(scene);
 
             primaryStage.setTitle("DriverFin");
             primaryStage.setScene(scene);
@@ -59,7 +60,8 @@ public class MainApp extends Application {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erro de Inicialização");
             alert.setHeaderText("Falha ao iniciar o aplicativo");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("Feche o aplicativo e abra novamente. Se o problema continuar, reinstale o aplicativo.");
+            Styles.apply(alert.getDialogPane());
             alert.showAndWait();
         }
     }

@@ -8,3 +8,11 @@ target/
 *.class
 dist/
 dependency-reduced-pom.xml
+*.migrated
+*.bak-v0*
+*.tmp
+*.pdf
+*.db-wal
+*.db-shm
+*.db-journal
+*.db.*.tmp

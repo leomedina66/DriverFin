@@ -8,6 +8,8 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class WorkShift {
+    private static final int MONEY_SCALE = 2;
+
     private Long id;
     private LocalDate date;
     private LocalTime timeStart;
@@ -48,7 +50,13 @@ public class WorkShift {
     }
 
     public double calculateKm() {
-        return Math.max(0.0, kmEnd - kmStart);
+        return calculateKmExact().doubleValue();
+    }
+
+    /** Distance as BigDecimal, avoiding binary noise such as 10150.3 - 10000.1 = 150.1999999999989. */
+    public BigDecimal calculateKmExact() {
+        BigDecimal distance = BigDecimal.valueOf(kmEnd).subtract(BigDecimal.valueOf(kmStart));
+        return distance.max(BigDecimal.ZERO);
     }
 
     public BigDecimal getGrossIncome() {
@@ -60,7 +68,20 @@ public class WorkShift {
     }
 
     public BigDecimal calculateMaintReserve(BigDecimal maintenanceRatePerKm) {
-        return maintenanceRatePerKm.multiply(BigDecimal.valueOf(calculateKm()));
+        return maintenanceRatePerKm.multiply(calculateKmExact()).setScale(MONEY_SCALE, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calculateGrossPerHour() {
+        return divideOrZero(getGrossIncome(), BigDecimal.valueOf(calculateHours()));
+    }
+
+    public BigDecimal calculateGrossPerKm() {
+        return divideOrZero(getGrossIncome(), calculateKmExact());
+    }
+
+    private static BigDecimal divideOrZero(BigDecimal value, BigDecimal divisor) {
+        if (divisor.signum() <= 0) return BigDecimal.ZERO.setScale(MONEY_SCALE);
+        return value.divide(divisor, MONEY_SCALE, RoundingMode.HALF_UP);
     }
 
     public BigDecimal calculateNetProfit(BigDecimal maintenanceRatePerKm) {
